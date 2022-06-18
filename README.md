@@ -1,2 +1,2 @@
 # CVA-Net
-## The collected dataset is available at:
+## The code and the collected dataset are coming soon.
