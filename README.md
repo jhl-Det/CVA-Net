@@ -12,11 +12,11 @@ https://github.com/fundamentalvision/Deformable-DETR.
 
     We recommend you to use Anaconda to create a conda environment:
     ```bash
-    conda create -n deformable_detr python=3.7 pip
+    conda create -n cva_net python=3.7 pip
     ```
     Then, activate the environment:
     ```bash
-    conda activate deformable_detr
+    conda activate cva_net
     ```
   
 
