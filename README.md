@@ -1,19 +1,12 @@
 # CVA-Net
-
-By [Xizhou Zhu](https://scholar.google.com/citations?user=02RXI00AAAAJ),  [Weijie Su](https://www.weijiesu.com/),  [Lewei Lu](https://www.linkedin.com/in/lewei-lu-94015977/), [Bin Li](http://staff.ustc.edu.cn/~binli/), [Xiaogang Wang](http://www.ee.cuhk.edu.hk/~xgwang/), [Jifeng Dai](https://jifengdai.org/).
-
 This repository is an official implementation of the paper [A New Dataset and A Baseline Model for Breast Lesion Detection in Ultrasound Videos](http://arxiv.org/abs/2207.00141).
-
-
-## Introduction
-
-**TL; DR.** Deformable DETR is an efficient and fast-converging end-to-end object detector. It mitigates the high complexity and slow convergence issues of DETR via a novel sampling-based efficient attention mechanism.  
 
 ![CVA-Net](./figs/overview.png)
 
 ![CVA-Net](./figs/modules.png)
 
-**Abstract.** Breast lesion detection in ultrasound is critical for breast cancer
+## Abstract
+Breast lesion detection in ultrasound is critical for breast cancer
 diagnosis. Existing methods mainly rely on individual 2D ultrasound images or
 combine unlabeled video and labeled 2D images to train models for breast lesion
 detection. In this paper, we first collect and annotate an ultrasound video
@@ -31,14 +24,6 @@ of the original video as benign or malignant lesions to further enhance the
 final breast lesion detection performance in ultrasound videos. Experimental
 results on our annotated dataset demonstrate that our CVA-Net clearly
 outperforms state-of-the-art methods.
-
-## License
-
-This project is released under the [Apache 2.0 license](./LICENSE).
-
-## Changelog
-
-See [changelog.md](./docs/changelog.md) for detailed logs of major changes. 
 
 
 ## Citing CVA-Net
@@ -66,7 +51,7 @@ code_root/
 
 #### Training on single node
 
-For example, the command for training Deformable DETR on 8 GPUs is as following:
+For example, the command for training CVA-NET on 8 GPUs is as following:
 
 ```bash
 GPUS_PER_NODE=8 ./tools/run_dist_launch.sh 8 ./configs/configs.sh
@@ -74,18 +59,18 @@ GPUS_PER_NODE=8 ./tools/run_dist_launch.sh 8 ./configs/configs.sh
 
 #### Training on multiple nodes
 
-For example, the command for training Deformable DETR on 2 nodes of each with 8 GPUs is as following:
+For example, the command for training  on 2 nodes of each with 8 GPUs is as following:
 
 On node 1:
 
 ```bash
-MASTER_ADDR=<IP address of node 1> NODE_RANK=0 GPUS_PER_NODE=8 ./tools/run_dist_launch.sh 16 ./configs/r50_deformable_detr.sh
+MASTER_ADDR=<IP address of node 1> NODE_RANK=0 GPUS_PER_NODE=8 ./tools/run_dist_launch.sh 16 ./configs/configs.sh
 ```
 
 On node 2:
 
 ```bash
-MASTER_ADDR=<IP address of node 1> NODE_RANK=1 GPUS_PER_NODE=8 ./tools/run_dist_launch.sh 16 ./configs/r50_deformable_detr.sh
+MASTER_ADDR=<IP address of node 1> NODE_RANK=1 GPUS_PER_NODE=8 ./tools/run_dist_launch.sh 16 ./configs/configs.sh
 ```
 
 #### Training on slurm cluster
@@ -93,13 +78,13 @@ MASTER_ADDR=<IP address of node 1> NODE_RANK=1 GPUS_PER_NODE=8 ./tools/run_dist_
 If you are using slurm cluster, you can simply run the following command to train on 1 node with 8 GPUs:
 
 ```bash
-GPUS_PER_NODE=8 ./tools/run_dist_slurm.sh <partition> deformable_detr 8 configs/r50_deformable_detr.sh
+GPUS_PER_NODE=8 ./tools/run_dist_slurm.sh <partition> CVA-Net 8 configs/configs.sh
 ```
 
 Or 2 nodes of  each with 8 GPUs:
 
 ```bash
-GPUS_PER_NODE=8 ./tools/run_dist_slurm.sh <partition> deformable_detr 16 configs/r50_deformable_detr.sh
+GPUS_PER_NODE=8 ./tools/run_dist_slurm.sh <partition> CVA-Net 16 configs/configs.sh
 ```
 #### Some tips to speed-up training
 * If your file system is slow to read images, you may consider enabling '--cache_mode' option to load whole dataset into memory at the beginning of training.
@@ -107,7 +92,7 @@ GPUS_PER_NODE=8 ./tools/run_dist_slurm.sh <partition> deformable_detr 16 configs
 
 ### Evaluation
 
-You can get the config file and pretrained model of Deformable DETR (the link is in "Main Results" session), then run following command to evaluate it on COCO 2017 validation set:
+You can get the config file and pretrained model of CVA-Net (the link is in "Main Results" session), then run following command to evaluate it on the validation set:
 
 ```bash
 <path to config file> --resume <path to pre-trained model> --eval
