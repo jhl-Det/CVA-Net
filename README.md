@@ -27,10 +27,11 @@ outperforms state-of-the-art methods.
 
 
 ## Citing CVA-Net
-If you find CVA-Net useful in your research, please consider citing:
+coming soon.
+<!-- If you find CVA-Net useful in your research, please consider citing:
 ```bibtex
 
-```
+``` -->
 
 
 ## Usage
@@ -46,6 +47,9 @@ code_root/
       ├── train.json
       └── val.json
 ```
+
+### Pretrained Models
+coming soon.
 
 ### Training
 
