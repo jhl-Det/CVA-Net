@@ -100,6 +100,6 @@ You can get the config file and pretrained model of CVA-Net (the link is in "Mai
 
 You can also run distributed evaluation by using ```./tools/run_dist_launch.sh``` or ```./tools/run_dist_slurm.sh```.
 
-## Note
+## Notes
 The code of this repository is built on
 https://github.com/fundamentalvision/Deformable-DETR.
