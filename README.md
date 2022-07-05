@@ -9,9 +9,9 @@ This repository is an official implementation of the paper [A New Dataset and A 
 
 **TL; DR.** Deformable DETR is an efficient and fast-converging end-to-end object detector. It mitigates the high complexity and slow convergence issues of DETR via a novel sampling-based efficient attention mechanism.  
 
-![CVA-Net](./figs/overview.pdf)
+![CVA-Net](./figs/overview.png)
 
-![CVA-Net](./figs/modules.pdf)
+![CVA-Net](./figs/modules.png)
 
 **Abstract.** Breast lesion detection in ultrasound is critical for breast cancer
 diagnosis. Existing methods mainly rely on individual 2D ultrasound images or
