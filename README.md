@@ -27,11 +27,16 @@ outperforms state-of-the-art methods.
 
 
 ## Citing CVA-Net
-coming soon.
-<!-- If you find CVA-Net useful in your research, please consider citing:
-```bibtex
+If you find CVA-Net useful in your research, please consider citing:
+```
+@article{lin2022new,
+  title={A New Dataset and A Baseline Model for Breast Lesion Detection in Ultrasound Videos},
+  author={Lin, Zhi and Lin, Junhao and Zhu, Lei and Fu, Huazhu and Qin, Jing and Wang, Liansheng},
+  journal={arXiv preprint arXiv:2207.00141},
+  year={2022}
+}
+```
 
-``` -->
 
 
 ## Usage
