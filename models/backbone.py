@@ -341,8 +341,8 @@ class WindowAttention(nn.Module):
         B_, N, C = x.shape
         qkv = self.qkv(x).reshape(B_, N, 3, self.num_heads,
                                   C // self.num_heads).permute(2, 0, 3, 1, 4)
-        q, k, v = qkv[0], qkv[1], qkv[
-            2]  # make torchscript happy (cannot use tensor as tuple)
+        q, k, v = qkv[0], qkv[1], qkv[2]  
+        # make torchscript happy (cannot use tensor as tuple)
 
         q = q * self.scale
         attn = (q @ k.transpose(-2, -1))
@@ -477,24 +477,16 @@ class Joiner(nn.Sequential):
         # self attention
         self.self_attn = self_attn
         if self.self_attn:
-            d_model, n_heads, dropout = 512, 1, 0.1
-            self.attn = nn.MultiheadAttention(256, n_heads, dropout=dropout)
-            # num_heads = [2, 4, 8]
-            # sr_ratios = [4, 2, 1]
-            # sr_attens = []
-            # for i in range(3):
-            #     sr_attens.append(
-            #         Attention(dim=256, sr_ratio=sr_ratios[i], num_heads=num_heads[i])
-            #     )
-            # self.attn = nn.ModuleList(sr_attens)
-            self.norm1 = nn.LayerNorm(256)
+            d_model, n_heads, dropout = 256, 4, 0.1
+            self.attn = nn.MultiheadAttention(d_model, n_heads, dropout=dropout)
+            self.norm1 = nn.LayerNorm(d_model)
             in_channels = [512, 1024, 2048]
             input_proj_list = []
             for in_channel in in_channels:
                 input_proj_list.append(
                     nn.Sequential(
-                        nn.Conv2d(in_channel, 256, kernel_size=1),
-                        nn.GroupNorm(32, 256),
+                        nn.Conv2d(in_channel, d_model, kernel_size=1),
+                        nn.GroupNorm(32, d_model),
                     ))
             self.input_proj = nn.ModuleList(input_proj_list)
 
@@ -504,6 +496,7 @@ class Joiner(nn.Sequential):
             tensor_list.tensors = tensor_list.tensors.view(-1, c, h, w)
 
         xs = self[0](tensor_list)
+        # print(b, f, c, h, w)
         out: List[NestedTensor] = []
         pos = []
 
@@ -511,20 +504,13 @@ class Joiner(nn.Sequential):
             if self.self_attn:
                 # Standard Multi-head attension
                 xx = x.tensors
-                f, c, w, h = xx.shape
-                # reduce the channel dimension to 256
-                if c == 512:
-                    cnt = 0
-                elif c == 1024:
-                    cnt = 1
-                else:
-                    cnt = 2
-                xx = self.input_proj[cnt](xx)
+                xx = self.input_proj[int(name)](xx)
                 f, c, w, h = xx.shape
                 xx = xx.flatten(2).permute(2, 0, 1)
                 xx = self.attn(xx, xx, xx)[0]
                 xx = self.norm1(xx)
                 x.tensors = xx.permute(1, 2, 0).reshape(f, c, w, h)
+            
             pooling = nn.AdaptiveAvgPool3d((x.tensors.shape[1], None, None))
             xis = []
             # inter-video fusion
