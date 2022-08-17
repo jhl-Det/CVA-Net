@@ -7,14 +7,15 @@ PY_ARGS=${@:1}
 ENC_LAYERS=6
 DEC_LAYERS=6
 
-python -u main.py \
+python3 -u main.py \
     --output_dir ${EXP_DIR} \
     --enc_layers ${ENC_LAYERS} \
     --dec_layers ${DEC_LAYERS} \
     --data_mode '15frames' \
     --num_global_frames 3 \
-    --num_feature_levels 1 \
+    --num_feature_levels 4 \
     --batch_size 1 \
     --lr 5e-5 \
+    --cache_mode \
     --dist_url 'tcp://127.0.0.1:50001'
     ${PY_ARGS}

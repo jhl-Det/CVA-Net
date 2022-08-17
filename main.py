@@ -171,7 +171,7 @@ def get_args_parser():
     # parser.add_argument('--coco_path', default='./data/coco', type=str)
     # data_mode = ['15frames', '30frames', 'every5frames', 'every10frames']
     parser.add_argument('--data_mode', default='15frames', type=str)
-    parser.add_argument('--data_coco_lite_path', default='./data', type=str)
+    parser.add_argument('--data_coco_lite_path', default='./miccai_buv', type=str)
 
     parser.add_argument('--coco_panoptic_path', type=str)
     parser.add_argument('--remove_difficult', action='store_true')
