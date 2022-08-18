@@ -129,8 +129,8 @@ def get_args_parser():
                         default=300,
                         type=int,
                         help="Number of query slots")
-    parser.add_argument('--dec_n_points', default=4, type=int)
-    parser.add_argument('--enc_n_points', default=4, type=int)
+    parser.add_argument('--dec_n_points', default=6, type=int)
+    parser.add_argument('--enc_n_points', default=6, type=int)
 
     # * Segmentation
     parser.add_argument('--masks',
@@ -396,7 +396,7 @@ def main(args):
         if args.output_dir:
             checkpoint_paths = [output_dir / 'checkpoint.pth']
             # extra checkpoint before LR drop and every 5 epochs
-            if (epoch + 1) % args.lr_drop == 0 or (epoch + 1) % 5 == 0:
+            if (epoch + 1) % args.lr_drop == 0 or (epoch + 1) % 1 == 0:
                 checkpoint_paths.append(output_dir /
                                         f'checkpoint{epoch:04}.pth')
             for checkpoint_path in checkpoint_paths:

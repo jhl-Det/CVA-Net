@@ -476,11 +476,22 @@ class Joiner(nn.Sequential):
         self.conf_res = scale_residue_conf()
         # self attention
         self.self_attn = self_attn
+        in_channels = [512, 1024, 2048]
+
+        avg_poolings = []
+        for in_channel in in_channels:
+            avg_poolings.append(nn.AdaptiveAvgPool3d((in_channel, None, None)))
+        self.avg_poolings = nn.ModuleList(avg_poolings)
+        
+        Conv2ds = []
+        for in_channel in in_channels:
+            Conv2ds.append(nn.Conv2d(in_channels=in_channel*2, out_channels=in_channel, kernel_size=1))
+        self.Conv2ds = nn.ModuleList(Conv2ds)
+
         if self.self_attn:
             d_model, n_heads, dropout = 256, 4, 0.1
             self.attn = nn.MultiheadAttention(d_model, n_heads, dropout=dropout)
             self.norm1 = nn.LayerNorm(d_model)
-            in_channels = [512, 1024, 2048]
             input_proj_list = []
             for in_channel in in_channels:
                 input_proj_list.append(
@@ -511,19 +522,21 @@ class Joiner(nn.Sequential):
                 xx = self.norm1(xx)
                 x.tensors = xx.permute(1, 2, 0).reshape(f, c, w, h)
             
-            pooling = nn.AdaptiveAvgPool3d((x.tensors.shape[1], None, None))
             xis = []
+            c, w, h = x.tensors.shape[-3:]
+            x.tensors = x.tensors.reshape(b,f,c,w,h)
             # inter-video fusion
             for i in range(f // 2):
                 x_i = torch.cat(
-                    (x.tensors[i, :, :, :], x.tensors[i + f // 2, :, :, :]),
-                    0).unsqueeze(0)
-                x_i = pooling(x_i)
+                    (x.tensors[:, i, :, :, :], 
+                     x.tensors[:, i + f // 2, :, :, :]
+                     ), 1)
+                x_i = self.Conv2ds[int(name)](x_i)
                 xis.append(x_i)
 
             # intra-video fusion
-            xis = torch.stack(xis).squeeze()
-            x.tensors = torch.mean(xis, 0).unsqueeze(0)
+            xis = torch.stack(xis)
+            x.tensors = torch.mean(xis, 0)
             out.append(x)
 
         # position encoding

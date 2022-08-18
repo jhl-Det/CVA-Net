@@ -2,7 +2,7 @@
 
 set -x
 
-EXP_DIR=./run/self_attn_exp1
+EXP_DIR=./run/self_attn_exp2
 PY_ARGS=${@:1}
 
 python3 -u main.py \
@@ -13,4 +13,7 @@ python3 -u main.py \
     --batch_size 1 \
     --lr 5e-5 \
     --self_attn \
+    --cache_mode \
+    --shuffled_aug "centerCrop" \
+    --resume /opt/tiger/prt_det/CVA-Net/run/self_attn_exp2/checkpoint.pth \
     ${PY_ARGS}
