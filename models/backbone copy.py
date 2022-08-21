@@ -480,19 +480,15 @@ class Joiner(nn.Sequential):
 
         in_channels1 = [256, 1024, 2048]
 
-
+        avg_poolings = []
+        for in_channel in in_channels:
+            avg_poolings.append(nn.AdaptiveAvgPool3d((in_channel, None, None)))
+        self.avg_poolings = nn.ModuleList(avg_poolings)
         
-        
-        self.avg_pool256 = nn.AdaptiveAvgPool3d((256, None, None))
-        self.avg_pool512 = nn.AdaptiveAvgPool3d((512, None, None))
-        self.avg_pool1024 = nn.AdaptiveAvgPool3d((1024, None, None))
-        self.avg_pool2048 = nn.AdaptiveAvgPool3d((2048, None, None))
-
-
-        # self.Conv256 = nn.Conv2d(in_channels=512, out_channels=256, kernel_size=1)
-        # self.Conv512 = nn.Conv2d(in_channels=1024, out_channels=512, kernel_size=1)
-        # self.Conv1024 = nn.Conv2d(in_channels=2048, out_channels=1024, kernel_size=1)
-        # self.Conv2048 = nn.Conv2d(in_channels=4096, out_channels=2048, kernel_size=1)
+        self.Conv256 = nn.Conv2d(in_channels=512, out_channels=256, kernel_size=1)
+        self.Conv512 = nn.Conv2d(in_channels=1024, out_channels=512, kernel_size=1)
+        self.Conv1024 = nn.Conv2d(in_channels=2048, out_channels=1024, kernel_size=1)
+        self.Conv2048 = nn.Conv2d(in_channels=4096, out_channels=2048, kernel_size=1)
 
         if self.self_attn:
             d_model, n_heads, dropout = 256, 4, 0.1
@@ -546,13 +542,13 @@ class Joiner(nn.Sequential):
                      x.tensors[:, i + f // 2, :, :, :]
                      ), 1)
                 if c==256:
-                    x_i = self.avg_pool256(x_i)
+                    x_i = self.Conv256(x_i)
                 elif c == 512:
-                    x_i = self.avg_pool512(x_i)
+                    x_i = self.Conv512(x_i)
                 elif c == 1024:
-                    x_i = self.avg_pool1024(x_i)
+                    x_i = self.Conv1024(x_i)
                 else:
-                    x_i = self.avg_pool2048(x_i)
+                    x_i = self.Conv2048(x_i)
 
                 xis.append(x_i)
 

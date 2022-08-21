@@ -328,6 +328,7 @@ def main(args):
         checkpoint = torch.load(args.frozen_weights, map_location='cpu')
         model_without_ddp.detr.load_state_dict(checkpoint['model'])
 
+        
     if args.resume:
         if args.resume.startswith('https'):
             checkpoint = torch.hub.load_state_dict_from_url(args.resume,
@@ -347,12 +348,12 @@ def main(args):
             print('Unexpected Keys: {}'.format(unexpected_keys))
         if not args.eval and 'optimizer' in checkpoint and 'lr_scheduler' in checkpoint and 'epoch' in checkpoint:
             import copy
-            p_groups = copy.deepcopy(optimizer.param_groups)
-            optimizer.load_state_dict(checkpoint['optimizer'])
-            for pg, pg_old in zip(optimizer.param_groups, p_groups):
-                pg['lr'] = pg_old['lr']
-                pg['initial_lr'] = pg_old['initial_lr']
-            print(optimizer.param_groups)
+            # p_groups = copy.deepcopy(optimizer.param_groups)
+            # # optimizer.load_state_dict(checkpoint['optimizer'])
+            # # for pg, pg_old in zip(optimizer.param_groups, p_groups):
+            # #     pg['lr'] = pg_old['lr']
+            # #     pg['initial_lr'] = pg_old['initial_lr']
+            # # print(optimizer.param_groups)
             lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
             # todo: this is a hack for doing experiment that resume from checkpoint and also modify lr scheduler (e.g., decrease lr in advance).
             args.override_resumed_lr_drop = True

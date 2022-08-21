@@ -306,16 +306,37 @@ def make_coco_transforms(image_set):
     ])
 
     scales = [480, 512, 544, 576]
-
+    strong_aug = False
     if image_set == 'train':
+        if strong_aug:
+            import datasets.sltransform as SLT
+            
+            return T.Compose([
+                T.RandomHorizontalFlip(),
+                T.RandomSelect(
+                    T.RandomResize(scales, max_size=1333),
+                    T.Compose([
+                        T.RandomResize([400, 500]),
+                        T.RandomSizeCrop(384, 512),
+                        T.RandomResize(scales, max_size=1333),
+                    ])
+                ),
+                SLT.RandomSelectMulti([
+                    # SLT.RandomCrop(),
+                    # SLT.Rotate(10),
+                    SLT.LightingNoise(),
+                    SLT.AdjustBrightness(2),
+                    SLT.AdjustContrast(2),
+                ]),              
+                normalize,
+            ])
+
         return T.Compose([
             T.RandomHorizontalFlip(),
             T.RandomSelect(
                 T.RandomResize(scales, max_size=1333),
                 T.Compose([
-                    T.RandomResize([400, 500]),
-                    T.RandomSizeCrop(384, 512),
-                    T.RandomResize(scales, max_size=1333),
+                    T.RandomResize([640]),
                 ])
             ),
             normalize,
@@ -323,7 +344,7 @@ def make_coco_transforms(image_set):
 
     if image_set == 'val':
         return T.Compose([
-            T.RandomResize([512], max_size=1333),
+            T.RandomResize([640], max_size=1333),
             normalize,
         ])
 
