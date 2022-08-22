@@ -65,7 +65,7 @@ class CocoDetection(TvCocoDetection):
             # get the global frames
             image_glbs = []
             if self.num_global_frames > 0:
-
+                # random.seed(42)
                 select_range = [0, max_frm_id]
                 select_candidate = list(range(*select_range))
                 if path_name_id in select_candidate:
@@ -299,11 +299,13 @@ class ConvertCocoPolysToMask(object):
 
 
 def make_coco_transforms(image_set):
+
     normalize = T.Compose([
         T.ToTensor(),
         T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ])
-    scales = [512]
+
+    scales = [480, 512, 544, 576]
     if image_set == 'train':
         return T.Compose([
             T.RandomHorizontalFlip(),

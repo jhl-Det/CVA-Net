@@ -129,8 +129,8 @@ def get_args_parser():
                         default=300,
                         type=int,
                         help="Number of query slots")
-    parser.add_argument('--dec_n_points', default=4, type=int)
-    parser.add_argument('--enc_n_points', default=4, type=int)
+    parser.add_argument('--dec_n_points', default=6, type=int)
+    parser.add_argument('--enc_n_points', default=6, type=int)
 
     # * Segmentation
     parser.add_argument('--masks',
@@ -171,7 +171,7 @@ def get_args_parser():
     # parser.add_argument('--coco_path', default='./data/coco', type=str)
     # data_mode = ['15frames', '30frames', 'every5frames', 'every10frames']
     parser.add_argument('--data_mode', default='15frames', type=str)
-    parser.add_argument('--data_coco_lite_path', default='./data', type=str)
+    parser.add_argument('--data_coco_lite_path', default='./miccai_buv', type=str)
 
     parser.add_argument('--coco_panoptic_path', type=str)
     parser.add_argument('--remove_difficult', action='store_true')
@@ -328,19 +328,15 @@ def main(args):
         checkpoint = torch.load(args.frozen_weights, map_location='cpu')
         model_without_ddp.detr.load_state_dict(checkpoint['model'])
 
+        
     if args.resume:
         if args.resume.startswith('https'):
-            checkpoint = torch.hub.load_state_dict_from_url(args.resume,
-                                                            map_location='cpu',
-                                                            check_hash=True)
+            checkpoint = torch.hub.load_state_dict_from_url(
+                args.resume, map_location='cpu', check_hash=True)
         else:
             checkpoint = torch.load(args.resume, map_location='cpu')
-        missing_keys, unexpected_keys = model_without_ddp.load_state_dict(
-            checkpoint['model'], strict=False)
-        unexpected_keys = [
-            k for k in unexpected_keys
-            if not (k.endswith('total_params') or k.endswith('total_ops'))
-        ]
+        missing_keys, unexpected_keys = model_without_ddp.load_state_dict(checkpoint['model'], strict=False)
+        unexpected_keys = [k for k in unexpected_keys if not (k.endswith('total_params') or k.endswith('total_ops'))]
         if len(missing_keys) > 0:
             print('Missing Keys: {}'.format(missing_keys))
         if len(unexpected_keys) > 0:
@@ -357,21 +353,16 @@ def main(args):
             # todo: this is a hack for doing experiment that resume from checkpoint and also modify lr scheduler (e.g., decrease lr in advance).
             args.override_resumed_lr_drop = True
             if args.override_resumed_lr_drop:
-                print(
-                    'Warning: (hack) args.override_resumed_lr_drop is set to True, so args.lr_drop would override lr_drop in resumed lr_scheduler.'
-                )
+                print('Warning: (hack) args.override_resumed_lr_drop is set to True, so args.lr_drop would override lr_drop in resumed lr_scheduler.')
                 lr_scheduler.step_size = args.lr_drop
-                lr_scheduler.base_lrs = list(
-                    map(lambda group: group['initial_lr'],
-                        optimizer.param_groups))
+                lr_scheduler.base_lrs = list(map(lambda group: group['initial_lr'], optimizer.param_groups))
             lr_scheduler.step(lr_scheduler.last_epoch)
             args.start_epoch = checkpoint['epoch'] + 1
         # check the resumed model
         if not args.eval:
-            test_stats, coco_evaluator = evaluate(model, criterion,
-                                                  postprocessors,
-                                                  data_loader_val, base_ds,
-                                                  device, args.output_dir)
+            test_stats, coco_evaluator = evaluate(
+                model, criterion, postprocessors, data_loader_val, base_ds, device, args.output_dir
+            )
 
     if args.eval:
         test_stats, coco_evaluator = evaluate(model, criterion, postprocessors,
@@ -396,7 +387,7 @@ def main(args):
         if args.output_dir:
             checkpoint_paths = [output_dir / 'checkpoint.pth']
             # extra checkpoint before LR drop and every 5 epochs
-            if (epoch + 1) % args.lr_drop == 0 or (epoch + 1) % 5 == 0:
+            if (epoch + 1) % args.lr_drop == 0 or (epoch + 1) % 1 == 0:
                 checkpoint_paths.append(output_dir /
                                         f'checkpoint{epoch:04}.pth')
             for checkpoint_path in checkpoint_paths:
