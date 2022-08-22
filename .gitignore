@@ -4,7 +4,7 @@
 .idea/
 .vscode/
 __pycache__/
-*.txt
+# *.txt
 *.png
 *.jpg
 *.jpeg

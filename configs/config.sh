@@ -2,7 +2,7 @@
 
 set -x
 
-EXP_DIR=./run/self_attn_exp10
+EXP_DIR=./run/self_attn_final
 PY_ARGS=${@:1}
 
 python3 -u main.py \
