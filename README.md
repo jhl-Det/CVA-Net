@@ -51,11 +51,11 @@ If you find CVA-Net useful in your research, please consider citing:
 
     We recommend you to use Anaconda to create a conda environment:
     ```bash
-    conda create -n deformable_detr python=3.7 pip
+    conda create -n cva_net python=3.7 pip
     ```
     Then, activate the environment:
     ```bash
-    conda activate deformable_detr
+    conda activate cva_net
     ```
   
 * PyTorch>=1.5.1, torchvision>=0.6.1 (following instructions [here](https://pytorch.org/))
