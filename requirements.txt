@@ -1,0 +1,7 @@
+pycocotools
+tqdm
+cython
+scipy
+timm
+pillow==6.1
+tensorboardX
