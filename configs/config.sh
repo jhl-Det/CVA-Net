@@ -2,7 +2,7 @@
 
 set -x
 
-EXP_DIR=./run/self_attn_final
+EXP_DIR=./run/self_attn_final_exp1
 PY_ARGS=${@:1}
 
 python3 -u main.py \
@@ -16,6 +16,6 @@ python3 -u main.py \
     --self_attn \
     --dist_url tcp://127.0.0.1:50001 \
     --shuffled_aug "centerCrop" \
-    --resume /opt/tiger/prt_det/CVA-Net/run/self_attn_exp8/checkpoint0042.pth \
-    --eval
+    --resume /opt/tiger/prt_det/CVA-Net/run/self_attn_final_exp1/checkpoint0008.pth \
+    --sgd \
     ${PY_ARGS}
