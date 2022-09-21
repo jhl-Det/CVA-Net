@@ -29,12 +29,26 @@ outperforms state-of-the-art methods.
 ## Citing CVA-Net
 If you find CVA-Net useful in your research, please consider citing:
 ```
-@article{lin2022new,
-  title={A New Dataset and A Baseline Model for Breast Lesion Detection in Ultrasound Videos},
-  author={Lin, Zhi and Lin, Junhao and Zhu, Lei and Fu, Huazhu and Qin, Jing and Wang, Liansheng},
-  journal={arXiv preprint arXiv:2207.00141},
-  year={2022}
+@InProceedings{10.1007/978-3-031-16437-8_59,
+author="Lin, Zhi
+and Lin, Junhao
+and Zhu, Lei
+and Fu, Huazhu
+and Qin, Jing
+and Wang, Liansheng",
+editor="Wang, Linwei
+and Dou, Qi
+and Fletcher, P. Thomas
+and Speidel, Stefanie
+and Li, Shuo",
+title="A New Dataset and a Baseline Model for Breast Lesion Detection in Ultrasound Videos",
+booktitle="Medical Image Computing and Computer Assisted Intervention -- MICCAI 2022",
+year="2022",
+publisher="Springer Nature Switzerland",
+address="Cham",
+pages="614--623",
 }
+
 ```
 
 
