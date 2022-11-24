@@ -94,7 +94,7 @@ python test.py
 
 ### Dataset preparation
 
-Please download the dataset from [Baidu Drive](https://pan.baidu.com/s/1yYME7-DvvIEZzCb72NXaJA?pwd=jnie) or [Google Drive] (https://drive.google.com/file/d/1LVXK34OJhC2LkqqyMmVFnXsXQavvZdeF/view?usp=sharing), and organize them as following:
+Please download the dataset from [Baidu Drive](https://pan.baidu.com/s/1yYME7-DvvIEZzCb72NXaJA?pwd=jnie) or [Google Drive](https://drive.google.com/file/d/1LVXK34OJhC2LkqqyMmVFnXsXQavvZdeF/view?usp=sharing), and organize them as following:
 
 ```
 code_root/
