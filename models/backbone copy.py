@@ -177,34 +177,47 @@ class Joiner(nn.Sequential):
         pos = []
 
         for i, (name, x) in enumerate(sorted(xs.items())):
-            c, w, h = x.tensors.shape[-3:]
+            if self.self_attn:
+                # Standard Multi-head attension
+                xx = x.tensors
+                n, c, w, h = xx.shape
+                if c == 512:
+                    cnt = 0
+                elif c == 1024:
+                    cnt = 1
+                else:
+                    cnt = 2
+                xx = self.input_proj[cnt](xx)
+                n, c, w, h = xx.shape
+
+                xx = xx.flatten(2).permute(2, 0, 1)
+                xx = self.attn(xx, xx, xx)[0]
+                xx = self.norm1(xx)
+                x.tensors = xx.permute(1, 2, 0).reshape(n, c, w, h)
+            
             xis = []
-            if c == 512:
-                cnt = 0
-            elif c == 1024:
-                cnt = 1
-            else:
-                cnt = 2
-            x.tensors = self.input_proj[cnt](x.tensors)
             c, w, h = x.tensors.shape[-3:]
-
-            x.tensors = x.tensors.reshape(b, f, c, w, h)
-
+            x.tensors = x.tensors.reshape(b,f,c,w,h)
             # inter-video fusion
             for i in range(f // 2):
-                x1 = x.tensors[:, i, :, :, :].flatten(2).permute(2, 0, 1)
-                x2 = x.tensors[:, i + f // 2, :, :, :].flatten(2).permute(2, 0, 1)
-                
-                x_i = self.attn(x2, x1, x1)[0]
-                x_i = self.norm1(x_i)
-                
+                x_i = torch.cat(
+                    (x.tensors[:, i, :, :, :], 
+                     x.tensors[:, i + f // 2, :, :, :]
+                     ), 1)
+                if c==256:
+                    x_i = self.avg_pool256(x_i)
+                elif c == 512:
+                    x_i = self.avg_pool512(x_i)
+                elif c == 1024:
+                    x_i = self.avg_pool1024(x_i)
+                else:
+                    x_i = self.avg_pool2048(x_i)
+
                 xis.append(x_i)
 
             # intra-video fusion
-            xx = self.attn(xis[2], xis[1], xis[0])[0]
-            xx = xx.permute(1, 2, 0).reshape(b, c, w, h)
-            x.tensors = xx
-            # x.tensors = torch.mean(xis, 0)
+            xis = torch.stack(xis)
+            x.tensors = torch.mean(xis, 0)
             out.append(x)
 
         # position encoding
