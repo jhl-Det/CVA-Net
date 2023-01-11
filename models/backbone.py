@@ -204,7 +204,6 @@ class Joiner(nn.Sequential):
             xx = self.attn(xis[2], xis[1], xis[0])[0]
             xx = xx.permute(1, 2, 0).reshape(b, c, w, h)
             x.tensors = xx
-            # x.tensors = torch.mean(xis, 0)
             out.append(x)
 
         # position encoding
