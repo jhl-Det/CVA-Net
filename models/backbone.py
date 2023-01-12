@@ -197,11 +197,12 @@ class Joiner(nn.Sequential):
                 
                 x_i = self.attn(x2, x1, x1)[0]
                 x_i = self.norm1(x_i)
-                
+                x_i = x1 + x_i
                 xis.append(x_i)
 
             # intra-video fusion
             xx = self.attn(xis[2], xis[1], xis[0])[0]
+            xx = xis[0] + xx
             xx = xx.permute(1, 2, 0).reshape(b, c, w, h)
             x.tensors = xx
             out.append(x)
