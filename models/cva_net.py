@@ -86,63 +86,6 @@ class TransitionBlock3(nn.Module):
             out = F.dropout(out, p=self.droprate, inplace=False, training=self.training)
         return out
 
-class scale_residue_est(nn.Module):
-    def __init__(self):
-        super(scale_residue_est, self).__init__()
-
-        self.conv1 = BottleneckBlock(256, 32)
-        self.trans_block1 = TransitionBlock3(288, 32)
-        self.conv2 = BottleneckBlock(32, 32)
-        self.trans_block2 = TransitionBlock3(64, 32)
-        self.conv3 = BottleneckBlock(32, 32)
-        self.trans_block3 = TransitionBlock3(64, 32)
-        self.conv_refin = nn.Conv2d(32, 16, 3, 1, 1)
-        self.tanh = nn.Tanh()
-        self.refine3 = nn.Conv2d(16, 3, kernel_size=3, stride=1, padding=1)
-
-        self.relu = nn.LeakyReLU(0.2, inplace=True)
-
-    def forward(self, x):
-        x1 = self.conv1(x)
-        x1 = self.trans_block1(x1)
-        x2 = self.conv2(x1)
-        x2 = self.trans_block2(x2)
-        x3 = self.conv3(x2)
-        x3 = self.trans_block3(x3)
-        x4 = self.relu((self.conv_refin(x3)))
-        residual = self.tanh(self.refine3(x4))
-
-        return residual
-
-
-class scale_residue_conf(nn.Module):
-    def __init__(self):
-        super(scale_residue_conf, self).__init__()
-
-        self.conv1 = nn.Conv2d(259,16,3,1,1)#BottleneckBlock(35, 16)
-        #self.trans_block1 = TransitionBlock3(51, 8)
-        self.conv2 = BottleneckBlock(16, 16)
-        self.trans_block2 = TransitionBlock3(32, 16)
-        self.conv3 = BottleneckBlock(16, 16)
-        self.trans_block3 = TransitionBlock3(32, 16)
-        self.conv_refin = nn.Conv2d(16, 16, 3, 1, 1)
-        self.sig = torch.nn.Sigmoid()
-        self.refine3 = nn.Conv2d(16, 3, kernel_size=3, stride=1, padding=1)
-
-        self.relu = nn.LeakyReLU(0.2, inplace=True)
-
-    def forward(self, x):
-        x1 = self.conv1(x)
-        #x1 = self.trans_block1(x1)
-        x2 = self.conv2(x1)
-        x2 = self.trans_block2(x2)
-        x3 = self.conv3(x2)
-        x3 = self.trans_block3(x3)
-        residual = self.sig(self.refine3(x3))
-
-        return residual
-
-
 class DeformableDETR(nn.Module):
     """ This is the Deformable DETR module that performs object detection """
     def __init__(self, backbone, transformer, num_classes, num_queries, num_feature_levels,
@@ -228,19 +171,6 @@ class DeformableDETR(nn.Module):
         self.umap_loss = umap_loss
         self.umap = True if umap_loss else umap
 
-        if self.umap:
-            self.input_proj1 = nn.ModuleList([
-                    nn.Sequential(
-                        nn.Conv2d(259, hidden_dim, kernel_size=1),
-                        nn.GroupNorm(32, hidden_dim),
-                    )])
-            self.res_est = scale_residue_est()
-            self.conf_res = scale_residue_conf()
-
-        if self.umap_loss:
-            self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-            self.class_embed2 = nn.Linear(675, num_classes)
-
 
     def forward(self, samples: NestedTensor):
         """ The forward expects a NestedTensor, which consists of:
@@ -273,64 +203,6 @@ class DeformableDETR(nn.Module):
 
             assert mask is not None
             masks.append(mask)
-
-
-        # get the uncertainty map
-        if self.umap:
-            # block1
-            um_srcs = []
-            um_masks = []
-
-            x_256 = srcs[0]
-            res_256 = self.res_est(x_256)
-            conf_256 = self.conf_res(torch.cat([x_256, res_256], 1))
-
-            x_512_um = torch.cat([x_256, res_256 * conf_256], 1) #259
-            um_srcs.append(x_512_um)
-
-            x_512 = srcs[1]
-            res_512 = self.res_est(x_512)
-            conf_512 = self.conf_res(torch.cat([x_512, res_512], 1))
-            x_1024_um = torch.cat([x_512, res_512 * conf_512], 1) #259
-            um_srcs.append(x_1024_um)
-
-            x_1024 = srcs[2]
-            res_1024 = self.res_est(x_1024)
-            conf_1024 = self.conf_res(torch.cat([x_1024, res_1024], 1))
-            x_2048_um = torch.cat([x_1024, res_1024 * conf_1024], 1) #259
-            um_srcs.append(x_2048_um)
-
-            srcs1 = []
-            for l, src in enumerate(um_srcs):
-                srcs1.append(self.input_proj1[0](src))
-            # block2
-            um_srcs = []
-            um_masks = []
-
-            x_256 = srcs1[0]
-            res_256 = self.res_est(x_256)
-            conf_256 = self.conf_res(torch.cat([x_256, res_256], 1))
-
-            x_512_um = torch.cat([x_256, res_256 * conf_256], 1) #259
-            um_srcs.append(x_512_um)
-
-            x_512 = srcs1[1]
-            res_512 = self.res_est(x_512)
-            conf_512 = self.conf_res(torch.cat([x_512, res_512], 1))
-            x_1024_um = torch.cat([x_512, res_512 * conf_512], 1) #259
-            um_srcs.append(x_1024_um)
-
-            x_1024 = srcs1[2]
-            res_1024 = self.res_est(x_1024)
-            conf_1024 = self.conf_res(torch.cat([x_1024, res_1024], 1))
-            x_2048_um = torch.cat([x_1024, res_1024 * conf_1024], 1) #259
-            um_srcs.append(x_2048_um)
-
-            srcs2 = []
-            for l, src in enumerate(um_srcs):
-                srcs2.append(self.input_proj1[0](src))
-
-            srcs = srcs2
         # multi-scale feature extraction
         if self.num_feature_levels > len(srcs):
             _len_srcs = len(srcs)
@@ -386,13 +258,6 @@ class DeformableDETR(nn.Module):
                 'pred_logits': outputs_class[-1],
                 'pred_boxes' : outputs_coord[-1],
                 }
-        if self.umap_loss:
-            cls_feature = conf_1024
-            cls_feature = F.interpolate(cls_feature, size=(15,15))
-            cls_feature = cls_feature.view(cls_feature.size(0), -1)
-            pred_cls = self.class_embed2(cls_feature)
-
-            out['pred_cls'] = pred_cls
 
         # if self.aux_loss:
         #     out['aux_outputs'] = self._set_aux_loss(outputs_class, outputs_coord)
@@ -653,9 +518,7 @@ def build(args):
         aux_loss           = args.aux_loss,
         with_box_refine    = args.with_box_refine,
         two_stage          = args.two_stage,
-        self_attn          = args.self_attn,
-        umap               = args.umap,
-        umap_loss          = args.umap_loss
+        self_attn          = args.self_attn
     )
     if args.masks:
         model = DETRsegm(model, freeze_detr=(args.frozen_weights is not None))
@@ -664,8 +527,8 @@ def build(args):
                 'loss_ce': args.cls_loss_coef,
                 'loss_bbox': args.bbox_loss_coef,
                 }
-    if args.umap_loss:
-        weight_dict['loss_new'] = 0.5 * args.cls_loss_coef
+    # if args.umap_loss:
+    #     weight_dict['loss_new'] = 0.5 * args.cls_loss_coef
 
     weight_dict['loss_giou'] = args.giou_loss_coef
     if args.masks:
