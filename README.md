@@ -104,10 +104,7 @@ code_root/
       └── val.json
 ```
 
-### Pretrained Models
-|Model |mAP<sup>val<br>0.5:0.95 | weights |
-| ------        |:---: | :----: |
-|CVA-Net    |37.5  | [GoogleDrive](https://drive.google.com/file/d/1Wqlh0gBgbzWrXZEcjrPhRqRZ1lmf33iP/view?usp=sharing) |
+
 
 ### Training
 
