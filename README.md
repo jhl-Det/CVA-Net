@@ -98,13 +98,16 @@ Please download the dataset from [Baidu Drive](https://pan.baidu.com/s/1yYME7-Dv
 
 ```
 code_root/
-└── datasets/
+└── miccai_buv/
       ├── rawframes/
       ├── train.json
       └── val.json
 ```
 
-
+### Pretrained Models
+ |Model |mAP<sup>val<br>0.5:0.95 | weights | log 
+ | ------        |:---: | :----: |  :----: |
+ |CVA-Net     | 36.8 |[GoogleDrive](https://drive.google.com/file/d/1WUBkLAfFZbTTnI7eeNk6iOzgV7AH29GM/view?usp=sharing)  |[log.txt](https://github.com/jhl-Det/CVA-Net/files/10399323/log.txt)
 
 ### Training
 
