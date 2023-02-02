@@ -152,6 +152,15 @@ GPUS_PER_NODE=8 ./tools/run_dist_slurm.sh <partition> CVA-Net 16 configs/configs
 * If your file system is slow to read images, you may consider enabling '--cache_mode' option to load whole dataset into memory at the beginning of training.
 * You may increase the batch size to maximize the GPU utilization, according to GPU memory of yours, e.g., set '--batch_size 3' or '--batch_size 4'.
 
+### Inference
+```bash
+python inference.py \
+--video_dir {your video save path} \
+--ckpt {your checkpoint file}.pth \
+--gpu 7
+```
+
+
 ### Evaluation
 
 You can get the config file and pretrained model of CVA-Net (the link is in "Main Results" session), then run following command to evaluate it on the validation set:
