@@ -5,6 +5,16 @@ This repository is an official implementation of the paper [A New Dataset and A 
 
 ![CVA-Net](./figs/modules.png)
 
+## News
+- 23-03-25. Fix some errors in datasets
+I would like to thank @YuY-Z for bringing to our attention some errors in our dataset.
+
+Upon reviewing the training dataset, we discovered two identical videos: "rawframes/benign/x66ef02e7f1b9a0ef" and "rawframes/malignant/x3b88488853e8b7d1". It has been determined that "rawframes/benign/x66ef02e7f1b9a0ef" should be deleted from the dataset because its label should be malignant.
+
+In addition, we also found four videos in the dataset that require correction: "benign\x63c9ba1377f35bf6" (97 frames), "benign\x5a1c46ec6377e946" (100 frames), "malignant\2390fbea047347b" (102 frames), and "malignant\7a39ab5d4970bf89" (105 frames). These videos are from the same patient, and some frames are the same because multiple samples were collected from the patient and saved. The correct labels for these videos should be malignant.
+
+While these errors have a significant impact on the model's classification task, their impact on the detection task is minimal.
+
 ## Abstract
 Breast lesion detection in ultrasound is critical for breast cancer
 diagnosis. Existing methods mainly rely on individual 2D ultrasound images or
