@@ -104,8 +104,9 @@ python test.py
 
 ### Dataset preparation
 
-Please download the dataset from [Baidu Drive](https://pan.baidu.com/s/1yYME7-DvvIEZzCb72NXaJA?pwd=jnie) or [Google Drive](https://drive.google.com/file/d/1LVXK34OJhC2LkqqyMmVFnXsXQavvZdeF/view?usp=sharing), and organize them as following:
-
+This database is available for only non-commercial use in research or educational purpose. 
+As long as you use the database for these purposes, you can edit or process images and annotations in this database.
+Please contact us for getting the access to our dataset.
 ```
 code_root/
 └── miccai_buv/
