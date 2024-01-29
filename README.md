@@ -118,7 +118,7 @@ code_root/
 ### Pretrained Models
  |Model |mAP<sup>val<br>0.5:0.95 | Weights | Log | Device
  | ------        |:---: | :----: |  :----: | :----:
- |CVA-Net     | 36.8 |[GoogleDrive](https://drive.google.com/file/d/1WUBkLAfFZbTTnI7eeNk6iOzgV7AH29GM/view?usp=sharing)  |[log.txt](https://github.com/jhl-Det/CVA-Net/files/10399323/log.txt) | 4 NVIDIA GeForce RTX 3090
+ |CVA-Net     | 36.8 |[GoogleDrive](https://drive.google.com/file/d/1Wqlh0gBgbzWrXZEcjrPhRqRZ1lmf33iP/view?usp=sharing)  |[log.txt](https://github.com/jhl-Det/CVA-Net/files/10399323/log.txt) | 4 NVIDIA GeForce RTX 3090
 
 ### Training
 
